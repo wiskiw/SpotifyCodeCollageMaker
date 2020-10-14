@@ -4,6 +4,8 @@ from typing import List
 from spotipy import SpotifyClientCredentials, Spotify
 from enum import Enum
 
+import secrets
+
 
 class SpotifyBarColor(Enum):
     white = "white"
@@ -16,11 +18,8 @@ class SpotifyImageFormat(Enum):
     swg = "swg"
 
 
-SPOTIFY_CLIENT_ID = "fill me please"
-SPOTIFY_CLIENT_SECRET = "fill me please"
-
-client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
-                                                      client_secret=SPOTIFY_CLIENT_SECRET)
+client_credentials_manager = SpotifyClientCredentials(client_id=secrets.SPOTIFY_CLIENT_ID,
+                                                      client_secret=secrets.SPOTIFY_CLIENT_SECRET)
 spotify = Spotify(client_credentials_manager=client_credentials_manager)
 
 
