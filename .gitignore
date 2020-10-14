@@ -151,4 +151,4 @@ crashlytics-build.properties
 fabric.properties
 
 secrets.py
-result_collage.*
+/result/

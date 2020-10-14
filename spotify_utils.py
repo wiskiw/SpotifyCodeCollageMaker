@@ -1,9 +1,9 @@
 from typing import List
-
 from spotipy import SpotifyClientCredentials, Spotify
 from enum import Enum
-
 import secrets
+
+DEFAULT_CODE_IMAGE_HEIGHT = 64
 
 
 class SpotifyBarColor(Enum):
@@ -42,27 +42,30 @@ class DefaultSpotifyBackgroundColor(Enum):
     red = "E13139"
     dark_red = "801B33"
     pink = "F5C3C9"
-    wtf = "AD93BF"
+    light_purple = "AD93BF"
     pig_pink = "EA7898"
     barbie_pink = "E640A2"
     purple = "A12E8C"
     dark_purple = "50364E"
 
 
-client_credentials_manager = SpotifyClientCredentials(client_id=secrets.SPOTIFY_CLIENT_ID,
-                                                      client_secret=secrets.SPOTIFY_CLIENT_SECRET)
+client_credentials_manager = SpotifyClientCredentials(
+    client_id=secrets.SPOTIFY_CLIENT_ID,
+    client_secret=secrets.SPOTIFY_CLIENT_SECRET
+)
 spotify = Spotify(client_credentials_manager=client_credentials_manager)
 
 
 # Src : https://github.com/spotify/web-api/issues/519#issuecomment-618114678
 def create_spotify_code_url(
         spotify_uri: str,
-        size_px: int,
+        size: int,
         image_format: SpotifyImageFormat = SpotifyImageFormat.jpeg,
         bar_color: SpotifyBarColor = SpotifyBarColor.white,
-        code_color_hex: str = "000000",
+        code_color_hex: str = DefaultSpotifyBackgroundColor.blue,
 ) -> str:
-    return f"https://scannables.scdn.co/uri/plain/{image_format.value}/{code_color_hex}/{bar_color.value}/{size_px}/{spotify_uri}"
+    return f"https://scannables.scdn.co/uri/plain/{image_format.value}/" \
+           f"{code_color_hex}/{bar_color.value}/{size}/{spotify_uri}"
 
 
 def get_playlist_track_uris(playlist_uri: str) -> List[str]:
