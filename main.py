@@ -1,5 +1,6 @@
 import random
 import requests
+import argparse
 
 from typing import List
 from io import BytesIO
@@ -49,28 +50,35 @@ def _load_images(image_urls: List[str]) -> List[Image.Image]:
     return images
 
 
-def create_collage(track_uri_list: List[str], collage_builder: CollageBuilder, save_path: str):
+def _create_collage(track_uri_list: List[str], collage_builder: CollageBuilder) -> Image.Image:
     code_image_size = builder.get_code_size()
     code_url_list = _get_tracks_code_urls(code_image_size.width, track_uri_list)
     code_images = _load_images(code_url_list)
 
-    collage = collage_builder.build(code_images)
-
-    create_dir(save_path)
-    collage.save(save_path, "JPEG")
-    collage.show()
+    return collage_builder.build(code_images)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    track_uris = get_playlist_track_uris("spotify:playlist:4NPbrMF42dtrbYlB8xBX1A")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("playlist_uri", help="Spotify URI for source playlist", type=str)
+    parser.add_argument('--show', help="Open final image when finished", action='store_true', default=False)
+
+    args = parser.parse_args()
+
+    playlist_uri = args.playlist_uri
+    print(f"Launch for playlist URI:{playlist_uri}")
+
+    track_uris = get_playlist_track_uris(playlist_uri)
     track_count = len(track_uris)
 
     canvas_size = ImageSize(256, DEFAULT_CODE_IMAGE_HEIGHT * track_count)
     builder = ColumnCollageBuilder(canvas_size, track_count)
 
-    create_collage(
-        track_uri_list=track_uris,
-        collage_builder=builder,
-        save_path=RESULT_FILE_PATH
-    )
+    collage = _create_collage(track_uri_list=track_uris, collage_builder=builder)
+
+    create_dir(RESULT_FILE_PATH)
+    collage.save(RESULT_FILE_PATH, "JPEG")
+
+    if args.show:
+        collage.show()
