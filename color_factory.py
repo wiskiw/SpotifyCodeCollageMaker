@@ -19,7 +19,6 @@ class SpotifyRandomColorFactory(ColorFactory):
         bg_color = random.choice(list(DefaultSpotifyBackgroundColor))
 
         return SpotifyCodeColor(bar=self._bar_color, background_hex=bg_color.value)
-        pass
 
 
 class SpotifyOrderedColorFactory(ColorFactory):
@@ -35,4 +34,13 @@ class SpotifyOrderedColorFactory(ColorFactory):
         bg_color = list(DefaultSpotifyBackgroundColor)[color_index]
 
         return SpotifyCodeColor(bar=self._bar_color, background_hex=bg_color.value)
-        pass
+
+
+class SingleColorFactory(ColorFactory):
+    _code_color: SpotifyCodeColor
+
+    def __init__(self, code_color: SpotifyCodeColor):
+        self._code_color = code_color
+
+    def get_color(self, code_index: int, codes_count: int) -> SpotifyCodeColor:
+        return SpotifyCodeColor(bar=self._code_color.bar, background_hex=self._code_color.background_hex)

@@ -15,7 +15,7 @@ class ImageProvider:
 
 class PlaylistProvider(ImageProvider):
     _CODE_WIDTH_TO_HEIGHT_ASPECT_RATION = 1 / 4
-    _IMAGE_CODE_FORMAT = SpotifyImageFormat.jpeg
+    _IMAGE_CODE_FORMAT = SpotifyImageFormat.png
 
     @staticmethod
     def get_code_height(code_width) -> int:
