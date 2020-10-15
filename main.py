@@ -14,7 +14,7 @@ _RESULT_FILE_EXTENSION = ".png"
 _DEFAULT_CODE_IMAGE_WIDTH = 256
 
 
-def _create_collage_for_playlist(playlist_uri: str, column_count: int, code_width: int) -> Image.Image:
+def _create_collage_for_playlist(playlist_uri: str, column_count: int, code_width: int, shuffle: bool) -> Image.Image:
     print(f"Fetching traks from playlist URI:{playlist_uri}")
 
     code_size = ImageSize(
@@ -26,7 +26,7 @@ def _create_collage_for_playlist(playlist_uri: str, column_count: int, code_widt
     color_factory = SingleColorFactory(
         SpotifyCodeColor(bar=SpotifyBarColor.white, background_hex=DefaultSpotifyBackgroundColor.black.value)
     )
-    image_provider = PlaylistProvider(code_size.width, playlist_uri, color_factory)
+    image_provider = PlaylistProvider(code_size.width, playlist_uri, color_factory, shuffle)
 
     code_images = image_provider.get_code_images()
     code_count = len(code_images)
@@ -53,6 +53,7 @@ if __name__ == '__main__':
         type=int,
         default=_DEFAULT_CODE_IMAGE_WIDTH
     )
+    parser.add_argument('--shuffle', help="Shuffle tracks in the playlist", action='store_true', default=False)
 
     args = parser.parse_args()
 
@@ -62,7 +63,8 @@ if __name__ == '__main__':
     collage = _create_collage_for_playlist(
         playlist_uri=args.playlist_uri,
         column_count=args.column_count,
-        code_width=args.size
+        code_width=args.size,
+        shuffle=args.shuffle
     )
 
     result_path = f"{_RESULT_FILE_FOLDER}{playlist_name}-{args.column_count}x{args.size}{_RESULT_FILE_EXTENSION}"

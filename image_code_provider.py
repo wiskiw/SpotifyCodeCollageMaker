@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 from PIL import Image
@@ -37,11 +38,13 @@ class PlaylistProvider(ImageProvider):
     _image_width: int
     _track_uris: List[str]
     _color_factory: ColorFactory
+    _shuffle: bool
 
-    def __init__(self, image_width: int, playlist_uri: str, color_factory: ColorFactory):
+    def __init__(self, image_width: int, playlist_uri: str, color_factory: ColorFactory, shuffle: bool = False):
         self._image_width = image_width
         self._track_uris = get_playlist_track_uris(playlist_uri)
         self._color_factory = color_factory
+        self._shuffle = shuffle
 
     def _get_tracks_code_urls(self) -> List[str]:
         codes_count = len(self._track_uris)
@@ -63,4 +66,8 @@ class PlaylistProvider(ImageProvider):
 
     def get_code_images(self) -> List[Image.Image]:
         code_url_list = self._get_tracks_code_urls()
+
+        if self._shuffle:
+            random.shuffle(code_url_list)
+
         return self._load_images(code_url_list)
