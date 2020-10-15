@@ -3,7 +3,7 @@ import argparse
 from PIL import Image
 
 from collage_builder import SingleSizeColumnCollageBuilder
-from color_factory import RandomColorFactory
+from color_factory import SpotifyRandomColorFactory, SpotifyOrderedColorFactory
 from core import ImageSize, create_dir
 from image_code_provider import PlaylistProvider
 from spotify_utils import SpotifyBarColor
@@ -20,7 +20,7 @@ def _create_collage_for_playlist(playlist_uri: str, column_count: int, code_widt
         height=PlaylistProvider.get_code_height(code_width)
     )
 
-    color_factory = RandomColorFactory(bar_color=SpotifyBarColor.white)
+    color_factory = SpotifyOrderedColorFactory(bar_color=SpotifyBarColor.white)
     image_provider = PlaylistProvider(code_size.width, playlist_uri, color_factory)
 
     code_images = image_provider.get_code_images()
