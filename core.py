@@ -1,6 +1,8 @@
 import errno
 import os
+from io import BytesIO
 
+import requests
 from PIL import Image
 
 
@@ -19,6 +21,11 @@ class ImageSize:
 
     def __str__(self) -> str:
         return "ImageSize(w:" + str(self.width) + "; h" + str(self.height) + ")"
+
+
+def get_image_by_url(url: str) -> Image.Image:
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
 
 
 def create_dir(path):

@@ -3,8 +3,6 @@ from spotipy import SpotifyClientCredentials, Spotify
 from enum import Enum
 import secrets
 
-_CODE_WIDTH_TO_HEIGHT_ASPECT_RATION = 1 / 4
-
 
 class SpotifyBarColor(Enum):
     white = "white"
@@ -49,6 +47,15 @@ class DefaultSpotifyBackgroundColor(Enum):
     dark_purple = "50364E"
 
 
+class SpotifyCodeColor:
+    bar: SpotifyBarColor
+    background_hex: str
+
+    def __init__(self, bar: SpotifyBarColor, background_hex: str):
+        self.bar = bar
+        self.background_hex = background_hex
+
+
 client_credentials_manager = SpotifyClientCredentials(
     client_id=secrets.SPOTIFY_CLIENT_ID,
     client_secret=secrets.SPOTIFY_CLIENT_SECRET
@@ -62,10 +69,9 @@ def create_spotify_code_url(
         size: int,
         image_format: SpotifyImageFormat = SpotifyImageFormat.jpeg,
         bar_color: SpotifyBarColor = SpotifyBarColor.white,
-        code_color_hex: str = DefaultSpotifyBackgroundColor.blue,
+        bg_color_hex: str = DefaultSpotifyBackgroundColor.black,
 ) -> str:
-    return f"https://scannables.scdn.co/uri/plain/{image_format.value}/" \
-           f"{code_color_hex}/{bar_color.value}/{size}/{spotify_uri}"
+    return f"https://scannables.scdn.co/uri/plain/{image_format.value}/{bg_color_hex}/{bar_color.value}/{size}/{spotify_uri}"
 
 
 def get_playlist_track_uris(playlist_uri: str) -> List[str]:
@@ -78,7 +84,3 @@ def get_playlist_track_uris(playlist_uri: str) -> List[str]:
         uri_list.append(track_uri)
 
     return uri_list
-
-
-def get_code_height(code_width) -> int:
-    return round(code_width * _CODE_WIDTH_TO_HEIGHT_ASPECT_RATION)
