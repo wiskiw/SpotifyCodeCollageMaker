@@ -3,7 +3,7 @@ from spotipy import SpotifyClientCredentials, Spotify
 from enum import Enum
 import secrets
 
-DEFAULT_CODE_IMAGE_HEIGHT = 64
+_CODE_WIDTH_TO_HEIGHT_ASPECT_RATION = 1 / 4
 
 
 class SpotifyBarColor(Enum):
@@ -78,3 +78,7 @@ def get_playlist_track_uris(playlist_uri: str) -> List[str]:
         uri_list.append(track_uri)
 
     return uri_list
+
+
+def get_code_height(code_width) -> int:
+    return round(code_width * _CODE_WIDTH_TO_HEIGHT_ASPECT_RATION)

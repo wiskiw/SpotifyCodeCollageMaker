@@ -9,9 +9,10 @@ from PIL import Image
 from collage_builder import ColumnCollageBuilder, CollageBuilder
 from core import ImageSize, create_dir
 from spotify_utils import get_playlist_track_uris, create_spotify_code_url, SpotifyImageFormat, SpotifyBarColor, \
-    DefaultSpotifyBackgroundColor, DEFAULT_CODE_IMAGE_HEIGHT
+    DefaultSpotifyBackgroundColor, get_code_height
 
-RESULT_FILE_PATH = "./result/result_collage.jpg"
+_RESULT_FILE_PATH = "./result/collage.jpg"
+_DEFAULT_CODE_IMAGE_WIDTH = 256
 
 
 def _get_tracks_code_urls(image_width: int, track_uri_list: List[str]) -> List[str]:
@@ -41,8 +42,8 @@ def _load_images(image_urls: List[str]) -> List[Image.Image]:
     images = []
 
     for index, image_url in enumerate(image_urls):
+        print(f"Downloading image {index + 1}/{len(image_urls)}: {image_url}")
         code_image = _get_image_by_url(image_url)
-        print(f"Downloading image {index + 1}/{len(image_urls)}")
         images.append(code_image)
 
     print(f"All images ({len(image_urls)}) downloaded!")
@@ -62,7 +63,10 @@ def _create_collage(track_uri_list: List[str], collage_builder: CollageBuilder) 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("playlist_uri", help="Spotify URI for source playlist", type=str)
+    parser.add_argument('column_count', help="Number of columns", type=int)
     parser.add_argument('--show', help="Open final image when finished", action='store_true', default=False)
+    parser.add_argument('--size', help="Size(width) of individual track code (128, 256, 512, etc)", type=int,
+                        default=_DEFAULT_CODE_IMAGE_WIDTH)
 
     args = parser.parse_args()
 
@@ -72,13 +76,18 @@ if __name__ == '__main__':
     track_uris = get_playlist_track_uris(playlist_uri)
     track_count = len(track_uris)
 
-    canvas_size = ImageSize(256, DEFAULT_CODE_IMAGE_HEIGHT * track_count)
-    builder = ColumnCollageBuilder(canvas_size, track_count)
+    track_code_size = args.size
+    column_count = args.column_count
+    canvas_size = ImageSize(
+        width=track_code_size * column_count,
+        height=get_code_height(track_code_size) * round(track_count / column_count)
+    )
+    builder = ColumnCollageBuilder(canvas_size, track_count, column_count)
 
     collage = _create_collage(track_uri_list=track_uris, collage_builder=builder)
 
-    create_dir(RESULT_FILE_PATH)
-    collage.save(RESULT_FILE_PATH, "JPEG")
+    create_dir(_RESULT_FILE_PATH)
+    collage.save(_RESULT_FILE_PATH, "JPEG")
 
     if args.show:
         collage.show()
