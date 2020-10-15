@@ -3,12 +3,14 @@ import argparse
 from PIL import Image
 
 from collage_builder import SingleSizeColumnCollageBuilder
-from color_factory import SpotifyRandomColorFactory, SpotifyOrderedColorFactory
+from color_factory import SpotifyOrderedColorFactory
 from core import ImageSize, create_dir
 from image_code_provider import PlaylistProvider
-from spotify_utils import SpotifyBarColor
+from spotify_utils import SpotifyBarColor, get_playlist_name
 
 _RESULT_FILE_PATH = "./result/collage.jpg"
+_RESULT_FILE_FOLDER = "./result/"
+_RESULT_FILE_EXTENSION = ".jpg"
 _DEFAULT_CODE_IMAGE_WIDTH = 256
 
 
@@ -51,14 +53,18 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    playlist_name = get_playlist_name(args.playlist_uri)
+    print(f"Found playlist '{playlist_name}'!")
+
     collage = _create_collage_for_playlist(
         playlist_uri=args.playlist_uri,
         column_count=args.column_count,
         code_width=args.size
     )
 
-    create_dir(_RESULT_FILE_PATH)
-    collage.save(_RESULT_FILE_PATH, "JPEG")
+    result_path = f"{_RESULT_FILE_FOLDER}{playlist_name}-{args.column_count}x{args.size}{_RESULT_FILE_EXTENSION}"
+    create_dir(result_path)
+    collage.save(result_path, "JPEG")
 
     if args.show:
         collage.show()

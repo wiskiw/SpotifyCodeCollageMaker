@@ -56,6 +56,8 @@ class SpotifyCodeColor:
         self.background_hex = background_hex
 
 
+_PLAYLIST_TRACKS_LIMIT = 100
+
 client_credentials_manager = SpotifyClientCredentials(
     client_id=secrets.SPOTIFY_CLIENT_ID,
     client_secret=secrets.SPOTIFY_CLIENT_SECRET
@@ -74,13 +76,21 @@ def create_spotify_code_url(
     return f"https://scannables.scdn.co/uri/plain/{image_format.value}/{bg_color_hex}/{bar_color.value}/{size}/{spotify_uri}"
 
 
+def get_playlist_name(playlist_uri: str) -> str:
+    tracks_meta = spotify.playlist(playlist_uri)
+    return tracks_meta['name']
+
+
+def _get_track_uti(track) -> str:
+    return track['track']['uri']
+
+
 def get_playlist_track_uris(playlist_uri: str) -> List[str]:
-    playlist = spotify.playlist(playlist_uri)
-    tracks = playlist['tracks']["items"]
+    tracks_meta = spotify.playlist_items(playlist_uri, additional_types=('track',))
 
-    uri_list = []
-    for track in tracks:
-        track_uri = track['track']['uri']
-        uri_list.append(track_uri)
+    track_list = tracks_meta["items"]
+    while tracks_meta['next'] is not None:
+        tracks_meta = spotify.next(tracks_meta)
+        track_list.extend(tracks_meta['items'])
 
-    return uri_list
+    return list(map(_get_track_uti, track_list))
