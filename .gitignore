@@ -150,5 +150,16 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# Windows thumbnail db
+Thumbs.db
+ehthumbs.db
+
+# OSX files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
 secrets.py
 /result/
