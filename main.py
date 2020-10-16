@@ -23,8 +23,9 @@ def _get_args():
 
     _default_column_count = 1
     parser.add_argument(
-        '--column_count',
-        help="Number of columns ({_default_column_count} default)",
+        '--columns',
+        dest="column_count",
+        help=f"Number of columns ({_default_column_count} default)",
         type=int,
         default=_default_column_count
     )
