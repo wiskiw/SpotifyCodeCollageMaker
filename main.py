@@ -20,7 +20,14 @@ _IMAGE_FACTORY_NAME_SINGLE = "single_color"
 def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("playlist_uri", help="Spotify URI for source playlist", type=str)
-    parser.add_argument('column_count', help="Number of columns", type=int)
+
+    _default_column_count = 1
+    parser.add_argument(
+        '--column_count',
+        help="Number of columns ({_default_column_count} default)",
+        type=int,
+        default=_default_column_count
+    )
     parser.add_argument('--show', help="Open final image when finished", action='store_true', default=False)
 
     _default_size = _DEFAULT_CODE_IMAGE_WIDTH
